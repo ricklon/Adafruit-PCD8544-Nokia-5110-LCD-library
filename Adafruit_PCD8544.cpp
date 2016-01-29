@@ -172,10 +172,11 @@ void Adafruit_PCD8544::begin(uint8_t contrast, uint8_t bias) {
   if (isHardwareSPI()) {
     // Setup hardware SPI.
     SPI.begin();
-    SPI.setClockDivider(PCD8544_SPI_CLOCK_DIV);
+//    SPI.setClockDivider(PCD8544_SPI_CLOCK_DIV);
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
   }
+  /*
   else {
     // Setup software SPI.
 
@@ -189,6 +190,7 @@ void Adafruit_PCD8544::begin(uint8_t contrast, uint8_t bias) {
     mosiport    = portOutputRegister(digitalPinToPort(_din));
     mosipinmask = digitalPinToBitMask(_din);
   }
+  */
 
   // Set common pin outputs.
   pinMode(_dc, OUTPUT);
