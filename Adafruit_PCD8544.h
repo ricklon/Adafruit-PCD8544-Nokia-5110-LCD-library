@@ -27,8 +27,11 @@ All text above, and the splash screen must be included in any redistribution
 
 #include <SPI.h>
 
-#ifdef __SAM3X8E__
+#if defined(__SAM3X8E__)
   typedef volatile RwReg PortReg;
+  typedef uint32_t PortMask;
+#elif defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+  typedef volatile uint32_t PortReg;
   typedef uint32_t PortMask;
 #else
   typedef volatile uint8_t PortReg;
