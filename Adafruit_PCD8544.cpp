@@ -37,6 +37,8 @@ All text above, and the splash screen below must be included in any redistributi
 #include <Adafruit_GFX.h>
 #include "Adafruit_PCD8544.h"
 
+
+
 // If the SPI library has transaction support, these functions
 // establish settings and protect from interference from other
 // libraries.  Otherwise, they simply do nothing.
@@ -282,9 +284,10 @@ uint8_t Adafruit_PCD8544::getPixel(int8_t x, int8_t y) {
 void Adafruit_PCD8544::begin(uint8_t contrast, uint8_t bias) {
   if (isHardwareSPI()) {
     // Setup hardware SPI.
-    SPI.begin();
-//    SPI.setClockDivider(PCD8544_SPI_CLOCK_DIV);
 
+    SPI.begin();
+    SPI.setClockDivider(PCD8544_SPI_CLOCK_DIV);
+  //  SPI.setSpeed(40000000);
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
   }
