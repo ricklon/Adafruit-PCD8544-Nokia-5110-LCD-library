@@ -4,14 +4,14 @@ This is a library for our Monochrome Nokia 5110 LCD Displays
   Pick one up today in the adafruit shop!
   ------> http://www.adafruit.com/products/338
 
-These displays use SPI to communicate, 4 or 5 pins are required to  
+These displays use SPI to communicate, 4 or 5 pins are required to
 interface
 
-Adafruit invests time and resources providing this open source code, 
-please support Adafruit and open-source hardware by purchasing 
+Adafruit invests time and resources providing this open source code,
+please support Adafruit and open-source hardware by purchasing
 products from Adafruit!
 
-Written by Limor Fried/Ladyada  for Adafruit Industries.  
+Written by Limor Fried/Ladyada  for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above, and the splash screen must be included in any redistribution
 *********************************************************************/
@@ -31,6 +31,7 @@ All text above, and the splash screen must be included in any redistribution
   typedef volatile RwReg PortReg;
   typedef uint32_t PortMask;
 #elif defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+  //PortReg not used because of type error in the software spi implementation volatile uint32_t * is later in code
   typedef volatile uint32_t PortReg;
   typedef uint32_t PortMask;
 #else
@@ -65,9 +66,14 @@ All text above, and the splash screen must be included in any redistribution
 #define PCD8544_SETBIAS 0x10
 #define PCD8544_SETVOP 0x80
 
+#define SCROLL_LEFT 1
+#define SCROLL_RIGHT 2
+#define SCROLL_UP 3
+#define SCROLL_DOWN 4
+
 // Default to max SPI clock speed for PCD8544 of 4 mhz (16mhz / 4) for normal Arduinos.
 // This can be modified to change the clock speed if necessary (like for supporting other hardware).
-#define PCD8544_SPI_CLOCK_DIV SPI_CLOCK_DIV4
+#define PCD8544_SPI_CLOCK_DIV 40000000
 
 class Adafruit_PCD8544 : public Adafruit_GFX {
  public:
@@ -80,20 +86,26 @@ class Adafruit_PCD8544 : public Adafruit_GFX {
   Adafruit_PCD8544(int8_t DC, int8_t CS, int8_t RST);
 
   void begin(uint8_t contrast = 40, uint8_t bias = 0x04);
-  
+
   void command(uint8_t c);
   void data(uint8_t c);
-  
+
   void setContrast(uint8_t val);
   void clearDisplay(void);
   void display();
-  
+  void invertDisplay(boolean i);
+  // Return the address of the raw buffer for application-side processing
+  uint8_t * getPixelBuffer();
+  // Enable/disable power-saving mode, ie. turn the display off/on
+  void powerSaving(boolean i);
+  void scroll(uint8_t direction = SCROLL_UP, uint8_t pixels = 1);
+
   void drawPixel(int16_t x, int16_t y, uint16_t color);
   uint8_t getPixel(int8_t x, int8_t y);
 
  private:
   int8_t _din, _sclk, _dc, _rst, _cs;
-  volatile PortReg  *mosiport, *clkport;
+  volatile uint32_t  *mosiport, *clkport;
   PortMask mosipinmask, clkpinmask;
 
   void spiWrite(uint8_t c);
